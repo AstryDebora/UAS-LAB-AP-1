@@ -1,0 +1,180 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <string>
+#include <cctype>
+using namespace std;
+
+#define RESET "\033[0m"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+
+struct Note{
+    string title;
+    string text;
+    string creationDate;
+};
+
+class Menu{
+    private:
+        Note _note;
+        int _choiceNum[2];
+        char _choiceStr[2];
+    public:
+        void createNote(vector<Note>& note){
+            system("CLS");
+            cout << string(20,'-') << " Creating Note " << string(20,'-') << endl;
+            cout << "Enter note's title: ";
+            getline(cin, _note.title);
+            time_t now = time(0);
+            char* dateTime = ctime(&now);
+            _note.creationDate = dateTime;
+            cout << "Note's content: (Press Enter to save)\n";
+            getline(cin, _note.text);
+            note.push_back(_note);
+            cout << GREEN << "Note created successfully!" << RESET << endl;
+            system("PAUSE");
+        }
+
+        void displayNotes(vector<Note>& note){
+            system("CLS");
+            if (note.size() == 0){
+                cout << RED << "You don't have any note!" << RESET << endl;
+            } else {
+                cout << string(18,'-') << " Your Notes " << string(18,'-') << endl;
+                for (int i = 0; i < note.size(); i++){
+                    cout << i+1 << ". " << note[i].title << " - " << YELLOW << note[i].creationDate << RESET << endl;
+                }
+                cout << "Do you want to view any note? (y/n): ";
+                cin >> _choiceStr[0];
+                _choiceStr[0] = tolower(_choiceStr[0]);
+                _choiceStr[1] = 'n';
+                if (_choiceStr[0] != 'n'){
+                    while (_choiceStr[1] != 'y'){
+                        cout << "Select the note you want to view: ";
+                        cin >> _choiceNum[0];
+                        if (_choiceNum[0] > note.size()){
+                            cout << RED << "Invalid choice. Please input correctly!" << RESET << endl;
+                        } else {
+                            cout << "Note ["<< note[_choiceNum[0]-1].title << "]" << endl;
+                            cout << "--> \"" << note[_choiceNum[0]-1].text << "\"" << endl;
+                        }
+                        cout << "Exit? (y/n): "; cin >> _choiceStr[1];
+                        _choiceStr[1] = tolower(_choiceStr[1]);
+                    }
+                }
+            }
+            system("PAUSE");
+        }
+
+        void editNote(vector<Note>& note){
+            system("CLS");
+            if (note.size() == 0){
+                cout << RED << "You don't have any note!" << RESET << endl;
+            } else {
+                cout << string(18,'-') << " Your Notes " << string(18,'-') << endl;
+                for (int i = 0; i < note.size(); i++){
+                    cout << i+1 << ". " << note[i].title << " - " << YELLOW << note[i].creationDate << RESET << endl;
+                }
+                cout << "Do you want to edit any note? (y/n): ";
+                cin >> _choiceStr[0];
+                _choiceStr[0] = tolower(_choiceStr[0]);
+                _choiceStr[1] = 'n';
+                if (_choiceStr[0] != 'n'){
+                    while (_choiceStr[1] != 'y'){
+                        cout << "Select the note you want to edit: ";
+                        cin >> _choiceNum[0];
+                        if (_choiceNum[0] > note.size()){
+                            cout << RED << "Invalid choice. Please input correctly!" << RESET << endl;
+                        } else {
+                            cout << "Note ["<< note[_choiceNum[0]-1].title << "]" << endl;
+                            cout << "--> \"" << note[_choiceNum[0]-1].text << "\"" << endl;
+
+                            cout << "1. Change Note's content\n2. Delete Note's content\n";
+                            cout << "Enter your choice: "; cin >> _choiceNum[1];
+                            cin.ignore();
+                            if (_choiceNum[1] == 1){
+                                cout << "Enter new note content (press enter to save): \n"; 
+                                getline(cin, _note.text);
+                                note[_choiceNum[0]-1].text = _note.text;
+                                cout << GREEN << "Content has been changed successfully!" << RESET << endl;
+                            } else if (_choiceNum[1] == 2){
+                                note[_choiceNum[0]-1].text.erase();
+                                cout << GREEN << "Content has been deleted successfully!" << RESET << endl;
+                            } else {
+                                cout << RED << "Invalid choice. Please input correctly!" << RESET << endl;
+                            }
+                        }
+                        cout << "Exit? (y/n): "; cin >> _choiceStr[1];
+                        _choiceStr[1] = tolower(_choiceStr[1]);
+                    }
+                }
+            }
+            system("PAUSE");
+        }
+
+        void deleteNote(vector<Note>& note){
+            system("CLS");
+            if (note.size() == 0){
+                cout << RED << "You don't have any note!" << RESET << endl;
+            } else {
+                cout << string(20,'-') << " Deleting Note " << string(20,'-') << endl;
+                for (int i = 0; i < note.size(); i++){
+                    cout << i+1 << ". " << note[i].title << " - " << YELLOW << note[i].creationDate << RESET << endl;
+                }
+                cout << "Do you want to delete any note? (y/n): ";
+                cin >> _choiceStr[0];
+                _choiceStr[0] = tolower(_choiceStr[0]);
+                _choiceStr[1] = 'n';
+                if (_choiceStr[0] != 'n'){
+                    while (_choiceStr[1] != 'y'){
+                        cout << "Select the note you want to delete: ";
+                        cin >> _choiceNum[0];
+                        if (_choiceNum[0] > note.size()){
+                            cout << RED << "Invalid choice. Please input correctly!" << RESET << endl;
+                        } else {
+                            note.erase(note.begin() + _choiceNum[0] - 1);
+                            cout << GREEN << "Note deleted successfully" << RESET << endl;
+                        }
+                        cout << "Exit? (y/n): "; cin >> _choiceStr[1];
+                        _choiceStr[1] = tolower(_choiceStr[1]);
+                    }
+                }
+            }
+            system("PAUSE");
+        }
+};
+
+int main(){
+    vector <Note> note;
+    Menu menu;
+    int choice;
+    do{
+        system("CLS");
+        cout << string(10,'=') << " Welcome to Note Taking CLI Program " << string(10,'=') << endl;
+
+        cout << endl << string(25,'-') << " Menu " << string(25,'-') << endl;
+        cout << "1. Create Note\n2. Display Notes\n3. Edit Note\n4. Delete Note\n5. Exit\n" << endl;
+
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice){
+            case 1: menu.createNote(note);
+                break;
+            case 2: menu.displayNotes(note);
+                break;
+            case 3: menu.editNote(note);
+                break;
+            case 4: menu.deleteNote(note);
+                break;
+            case 5: cout << GREEN << "Thanks for using my program. Feel free to try again!" << RESET << endl;
+                break;
+            default: cout << RED << "Invalid choice. Please try again!" << RESET << endl;
+                break;
+        }
+    } while (choice != 5);
+    return 0;
+}
